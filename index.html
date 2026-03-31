@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Performance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background layers -->
+  <div class="noise" aria-hidden="true"></div>
+  <div class="blobs" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+
+  <!-- ══════════════════════════════
+       HEADER / NAV
+  ══════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-inner">
+
+      <!-- Logo -->
+      <div class="logo">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="0" y="0" width="8" height="8" rx="1.5" fill="currentColor"/>
+            <rect x="10" y="0" width="8" height="8" rx="1.5" fill="currentColor" opacity=".4"/>
+            <rect x="0" y="10" width="8" height="8" rx="1.5" fill="currentColor" opacity=".4"/>
+            <rect x="10" y="10" width="8" height="8" rx="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="logo-short">APT</span>
+        <span class="logo-long">Academic Performance Tracker</span>
+      </div>
+
+      <!-- Semester tabs -->
+      <nav class="sem-nav" role="navigation" aria-label="Semester navigation">
+        <button class="s-tab active" onclick="showSem(1)"      data-sem="1">I</button>
+        <button class="s-tab"        onclick="showSem(2)"      data-sem="2">II</button>
+        <button class="s-tab"        onclick="showSem(3)"      data-sem="3">III</button>
+        <button class="s-tab"        onclick="showSem(4)"      data-sem="4">IV</button>
+        <button class="s-tab"        onclick="showSem(5)"      data-sem="5">V</button>
+        <button class="s-tab"        onclick="showSem(6)"      data-sem="6">VI</button>
+        <button class="s-tab"        onclick="showSem(7)"      data-sem="7">VII</button>
+        <button class="s-tab"        onclick="showSem(8)"      data-sem="8">VIII</button>
+        <button class="s-tab tab-cgpa" onclick="showSem('cgpa')" data-sem="cgpa">CGPA</button>
+      </nav>
+
+      <!-- Theme toggle -->
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <span class="icon-dark">🌙</span>
+        <span class="icon-light">☀️</span>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════
+       HERO STRIP
+  ══════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-wrap">
+      <div class="hero-left">
+        <span class="hero-eyebrow">Electronics &amp; Communication Engineering</span>
+        <h1 class="hero-h1">Track every <em>grade</em>,<br/>every <em>semester.</em></h1>
+        <p class="hero-p">Select your grades and instantly compute weighted GPA &amp; CGPA with real-time performance analytics across all 8 semesters.</p>
+      </div>
+      <div class="hero-card" id="heroCard">
+        <div class="hc-row">
+          <div class="hc-stat">
+            <span class="hc-val" id="hc-sems">0 / 8</span>
+            <span class="hc-key">Semesters</span>
+          </div>
+          <div class="hc-sep"></div>
+          <div class="hc-stat">
+            <span class="hc-val" id="hc-cgpa">—</span>
+            <span class="hc-key">Live CGPA</span>
+          </div>
+          <div class="hc-sep"></div>
+          <div class="hc-stat">
+            <span class="hc-val" id="hc-pct">—</span>
+            <span class="hc-key">Percentage</span>
+          </div>
+        </div>
+        <div class="hc-bar-wrap">
+          <div class="hc-bar-track">
+            <div class="hc-bar-fill" id="hcBar"></div>
+          </div>
+          <span class="hc-bar-lbl" id="hcBarLbl">Enter grades to see live progress</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════ -->
+  <main class="main">
+
+    <!-- ── SEMESTER 1 ── -->
+    <section id="sem1" class="sem-section active-section">
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <div class="sec-info">
+          <h2 class="sec-title">Semester I</h2>
+          <span class="sec-sub">9 subjects · 22 credits</span>
+        </div>
+        <div class="sec-ring">
+          <svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc1"/></svg>
+          <span class="ring-lbl" id="rl1">—</span>
+        </div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory">
+          <span class="sub-name">Calculus And Linear Algebra</span>
+          <span class="sub-cr">4</span>
+          <select class="grade-sel" data-credit="4" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_0">—</span>
+        </div>
+        <div class="st-row" data-type="theory">
+          <span class="sub-name">Problem Solving And C Programming</span>
+          <span class="sub-cr">3</span>
+          <select class="grade-sel" data-credit="3" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_1">—</span>
+        </div>
+        <div class="st-row" data-type="theory">
+          <span class="sub-name">Basics Of Electrical &amp; Instrumentation Engineering</span>
+          <span class="sub-cr">3</span>
+          <select class="grade-sel" data-credit="3" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_2">—</span>
+        </div>
+        <div class="st-row" data-type="theory">
+          <span class="sub-name">Engineering Chemistry</span>
+          <span class="sub-cr">3</span>
+          <select class="grade-sel" data-credit="3" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_3">—</span>
+        </div>
+        <div class="st-row" data-type="theory">
+          <span class="sub-name">Professional Communication I</span>
+          <span class="sub-cr">3</span>
+          <select class="grade-sel" data-credit="3" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_4">—</span>
+        </div>
+        <div class="st-row" data-type="theory">
+          <span class="sub-name">Heritage Of Tamils</span>
+          <span class="sub-cr">1</span>
+          <select class="grade-sel" data-credit="1" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_5">—</span>
+        </div>
+        <div class="st-row" data-type="lab">
+          <span class="sub-name">C Programming Lab</span>
+          <span class="sub-cr">2</span>
+          <select class="grade-sel" data-credit="2" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_6">—</span>
+        </div>
+        <div class="st-row" data-type="lab">
+          <span class="sub-name">Engineering Practices Lab</span>
+          <span class="sub-cr">2</span>
+          <select class="grade-sel" data-credit="2" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_7">—</span>
+        </div>
+        <div class="st-row" data-type="lab">
+          <span class="sub-name">Chemistry Lab</span>
+          <span class="sub-cr">1</span>
+          <select class="grade-sel" data-credit="1" onchange="onGradeChange(this,1)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_1_8">—</span>
+        </div>
+      </div>
+      <div class="sec-foot">
+        <button class="btn-calc" onclick="calculateGPA(1)">Calculate GPA</button>
+        <button class="btn-reset" onclick="resetSem(1)">↺ Reset</button>
+      </div>
+      <div class="result-box hidden" id="result-1"></div>
+    </section>
+
+    <!-- ── SEMESTER 2 ── -->
+    <section id="sem2" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <div class="sec-info"><h2 class="sec-title">Semester II</h2><span class="sec-sub">9 subjects · 23 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc2"/></svg><span class="ring-lbl" id="rl2">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Electronic Devices And Circuits</span><span class="sub-cr">4</span><select class="grade-sel" data-credit="4" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_0">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Data Structures using C</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_1">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Solid State Physics</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_2">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Professional Communication II</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_3">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Transforms &amp; PDEs (TPDE)</span><span class="sub-cr">4</span><select class="grade-sel" data-credit="4" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_4">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Tamils and Technology</span><span class="sub-cr">1</span><select class="grade-sel" data-credit="1" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_5">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Data Structures Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_6">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Engineering Graphics Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_7">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Physics Lab</span><span class="sub-cr">1</span><select class="grade-sel" data-credit="1" onchange="onGradeChange(this,2)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_2_8">—</span></div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(2)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(2)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-2"></div>
+    </section>
+
+    <!-- ── SEMESTER 3 ── -->
+    <section id="sem3" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <div class="sec-info"><h2 class="sec-title">Semester III</h2><span class="sec-sub">8 subjects · 23 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc3"/></svg><span class="ring-lbl" id="rl3">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Digital Logic Design</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_0">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Analog Electronics</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_1">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Algorithms</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_2">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Probability and Random Processes</span><span class="sub-cr">4</span><select class="grade-sel" data-credit="4" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_3">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Electromagnetic Waves</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_4">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Signals and Systems</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_5">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Digital Logic Design Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_6">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Analog Electronics Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,3)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_3_7">—</span></div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(3)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(3)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-3"></div>
+    </section>
+
+    <!-- ── SEMESTER 4 ── -->
+    <section id="sem4" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <div class="sec-info"><h2 class="sec-title">Semester IV</h2><span class="sec-sub">8 subjects · 22 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc4"/></svg><span class="ring-lbl" id="rl4">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Java Programming</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_0">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Transmission Lines and RF Systems</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_1">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Analog Circuit Design</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_2">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Digital Signal Processing</span><span class="sub-cr">4</span><select class="grade-sel" data-credit="4" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_3">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Analog and Digital Communication</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_4">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Java Programming Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_5">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Analog Circuit Design Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_6">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Analog and Digital Communication Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,4)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_4_7">—</span></div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(4)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(4)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-4"></div>
+    </section>
+
+    <!-- ── SEMESTER 5 ── -->
+    <section id="sem5" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">05</div>
+        <div class="sec-info"><h2 class="sec-title">Semester V</h2><span class="sec-sub">9 subjects · 22 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc5"/></svg><span class="ring-lbl" id="rl5">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Microprocessors &amp; Microcontrollers Interfacing</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_0">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Data Communication Networks</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_1">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Computational Thinking &amp; Data Handling Techniques</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_2">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Advanced Coding Techniques</span><span class="sub-cr">1</span><select class="grade-sel" data-credit="1" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_3">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Digital Image Processing</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_4">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Wearable Devices / SoC Design / 4G–5G (Elective)</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_5">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Environmental Science and Sustainability</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_6">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Data Communication Networks Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_7">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">MPMC Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,5)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_5_8">—</span></div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(5)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(5)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-5"></div>
+    </section>
+
+    <!-- ── SEMESTER 6 ── -->
+    <section id="sem6" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">06</div>
+        <div class="sec-info"><h2 class="sec-title">Semester VI</h2><span class="sec-sub">8 subjects · 22 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc6"/></svg><span class="ring-lbl" id="rl6">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">VLSI and Chip Design</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_0">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Embedded Systems and IoT Design</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_1">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Elective – 4</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_2">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Elective – 5</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_3">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Elective – 6</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_4">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Management Elective</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_5">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">VLSI Design Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_6">—</span></div>
+        <div class="st-row" data-type="lab"><span class="sub-name">Embedded Systems and IoT Design Lab</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,6)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_6_7">—</span></div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(6)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(6)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-6"></div>
+    </section>
+
+    <!-- ── SEMESTER 7 ── -->
+    <section id="sem7" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">07</div>
+        <div class="sec-info"><h2 class="sec-title">Semester VII</h2><span class="sec-sub">7 subjects · 18 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc7"/></svg><span class="ring-lbl" id="rl7">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Universal Human Values</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_0">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Open Elective – 1</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_1">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Open Elective – 2</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_2">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Open Elective – 3</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_3">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Open Elective – 4</span><span class="sub-cr">3</span><select class="grade-sel" data-credit="3" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_4">—</span></div>
+        <div class="st-row" data-type="theory"><span class="sub-name">Internship / Industrial Training</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_5">—</span></div>
+        <div class="st-row" data-type="project"><span class="sub-name">Project Work – Phase 1</span><span class="sub-cr">2</span><select class="grade-sel" data-credit="2" onchange="onGradeChange(this,7)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select><span class="sub-pts hide-sm" id="pts_7_6">—</span></div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(7)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(7)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-7"></div>
+    </section>
+
+    <!-- ── SEMESTER 8 ── -->
+    <section id="sem8" class="sem-section">
+      <div class="sec-head">
+        <div class="sec-num">08</div>
+        <div class="sec-info"><h2 class="sec-title">Semester VIII</h2><span class="sec-sub">1 subject · 10 credits</span></div>
+        <div class="sec-ring"><svg viewBox="0 0 44 44" class="ring-svg"><circle class="rc-bg" cx="22" cy="22" r="17"/><circle class="rc-fg" cx="22" cy="22" r="17" id="rc8"/></svg><span class="ring-lbl" id="rl8">—</span></div>
+      </div>
+      <div class="sub-table">
+        <div class="st-head"><span>Subject</span><span>Cr</span><span>Grade</span><span class="hide-sm">Pts</span></div>
+        <div class="st-row" data-type="project">
+          <span class="sub-name">Project Work – Phase 2 (Final Year Project)</span>
+          <span class="sub-cr">10</span>
+          <select class="grade-sel" data-credit="10" onchange="onGradeChange(this,8)"><option value="">—</option><option value="O">O · 10</option><option value="A+">A+ · 9</option><option value="A">A · 8</option><option value="B+">B+ · 7</option><option value="B">B · 6</option><option value="C">C · 5</option><option value="RA">RA · 0</option></select>
+          <span class="sub-pts hide-sm" id="pts_8_0">—</span>
+        </div>
+      </div>
+      <div class="sec-foot"><button class="btn-calc" onclick="calculateGPA(8)">Calculate GPA</button><button class="btn-reset" onclick="resetSem(8)">↺ Reset</button></div>
+      <div class="result-box hidden" id="result-8"></div>
+    </section>
+
+    <!-- ══════════════════════════════
+         CGPA SECTION — fully working
+         identical logic to original
+    ══════════════════════════════ -->
+    <section id="cgpa" class="sem-section cgpa-section">
+      <div class="sec-head">
+        <div class="sec-num cgpa-num">∑</div>
+        <div class="sec-info">
+          <h2 class="sec-title">CGPA Calculator</h2>
+          <span class="sec-sub">Cumulative Grade Point Average across all semesters</span>
+        </div>
+      </div>
+
+      <!-- ── Auto fill panel ── -->
+      <div class="cgpa-panel" id="cgpaAutoPanel">
+        <div class="cpanel-head">
+          <span class="cpanel-icon">⚡</span>
+          <div>
+            <h3 class="cpanel-title">Auto-Calculate from Semesters</h3>
+            <p class="cpanel-hint">Semesters with a calculated GPA appear below. Uses weighted credit average.</p>
+          </div>
+        </div>
+        <div class="auto-chips" id="autoChips">
+          <p class="no-chips-msg">No semester GPA calculated yet. Go to each semester tab and click <strong>Calculate GPA</strong>.</p>
+        </div>
+        <button class="btn-calc" onclick="autoCGPA()" style="margin-top:1.25rem">Compute CGPA from Above</button>
+      </div>
+
+      <!-- ── Manual entry panel (exactly like original) ── -->
+      <div class="cgpa-panel" id="cgpaManualPanel">
+        <div class="cpanel-head">
+          <span class="cpanel-icon">✏️</span>
+          <div>
+            <h3 class="cpanel-title">Manual Entry</h3>
+            <p class="cpanel-hint">Enter your GPA for each semester manually, then compute.</p>
+          </div>
+        </div>
+
+        <!-- Dynamic GPA input rows — exactly as original addCGPAField() -->
+        <div class="cgpa-inputs" id="cgpa-inputs">
+          <!-- Rows injected by addCGPAField() -->
+        </div>
+
+        <div class="cgpa-actions">
+          <button class="btn-add-gpa" onclick="addCGPAField()">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Add Semester GPA
+          </button>
+          <button class="btn-calc" onclick="calculateCGPA()">Calculate CGPA</button>
+          <button class="btn-reset" onclick="resetCGPAtab()">↺ Reset CGPA</button>
+        </div>
+      </div>
+
+      <div class="result-box hidden" id="cgpa-result"></div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════
+       FOOTER
+  ══════════════════════════════ -->
+  <footer class="site-footer">
+    <span class="footer-heart">♥</span>
+    <span>Made with Love by <strong>SSK</strong></span>
+    <span class="fsep">·</span>
+    <span class="fmuted">Academic Performance Tracker &copy; 2025</span>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
